@@ -17,4 +17,9 @@ public struct Coordinates
         X += direction.X;
         Y += direction.Y;
     }
+
+    public readonly override string ToString()
+    {
+        return $"({X},{Y})";
+    }
 }

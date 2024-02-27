@@ -22,14 +22,16 @@ public abstract class MobilePiece : Piece
                 if (square.IsEmpty())
                 {
                     Move move = new(fromPosition, toPosition);
-                    moves.Add(square.Name, move);
+                    if (!chessboard.IsCheckedIfMoving(Color, move))
+                        moves.Add(square.Name, move);
                 }
                 else
                 {
                     if (!square.IsOccupiedByColor(Color) && !square.IsOccupiedByPieceName(PieceName.King))
                     {
                         Move move = new(fromPosition, toPosition, square.Piece);
-                        moves.Add(square.Name, move);
+                        if (!chessboard.IsCheckedIfMoving(Color, move))
+                            moves.Add(square.Name, move);
                     }
                     break;
                 }

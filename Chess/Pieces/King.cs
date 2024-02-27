@@ -25,7 +25,8 @@ public class King : Piece
             if (square != null && (square.IsEmpty() || (!square.IsOccupiedByColor(Color) && !square.IsOccupiedByPieceName(PieceName.King))))
             {
                 Move move = new(fromPosition, toPosition, square.Piece);
-                moves.Add(square.Name, move);
+                if (!chessboard.IsCheckedIfMoving(Color, move))
+                    moves.Add(square.Name, move);
             }
         }
 

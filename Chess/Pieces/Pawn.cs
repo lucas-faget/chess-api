@@ -26,8 +26,9 @@ public class Pawn : Piece
 
         if (square?.IsEmpty() ?? false)
         {
-            Move move = new(fromPosition, DirectionByColor[Color]);
-            moves.Add(square.Name, move);
+            Move move = new(fromPosition, toPosition);
+            if (!chessboard.IsCheckedIfMoving(Color, move))
+                moves.Add(square.Name, move);
 
             if (fromPosition.X == (Color == Color.Black ? Chessboard.Ranks.Length - 2 : 1))
             {
@@ -37,7 +38,8 @@ public class Pawn : Piece
                 if (square?.IsEmpty() ?? false)
                 {
                     Move move2 = new(fromPosition, toPosition);
-                    moves.Add(square.Name, move2);
+                    if (!chessboard.IsCheckedIfMoving(Color, move))
+                        moves.Add(square.Name, move2);
                 }
             }
         }

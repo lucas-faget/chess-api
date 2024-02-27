@@ -106,6 +106,165 @@ public class Chessboard
         return legalMoves;
     }
 
+    public void CarryOutMove(Move move)
+    {
+        var fromSquare = GetSquare(move.FromPosition);
+        var captureSquare = GetSquare(move.CapturePosition);
+        var toSquare = GetSquare(move.ToPosition);
+
+        if (fromSquare != null && toSquare != null && captureSquare != null)
+        {
+            captureSquare.Piece = null;
+            toSquare.Piece = fromSquare.Piece;
+            fromSquare.Piece = null;
+
+            if (move.RookMove != null)
+            {
+                CarryOutMove(move.RookMove);
+            }
+        }
+    }
+
+    public void UndoMove(Move move)
+    {
+        var fromSquare = GetSquare(move.FromPosition);
+        var captureSquare = GetSquare(move.CapturePosition);
+        var toSquare = GetSquare(move.ToPosition);
+
+        if (fromSquare != null && toSquare != null && captureSquare != null)
+        {
+            if (move.RookMove != null)
+            {
+                UndoMove(move.RookMove);
+            }
+
+            fromSquare.Piece = toSquare.Piece;
+            toSquare.Piece = null;
+            captureSquare.Piece = move.CapturedPiece;
+        }
+    }
+
+    public bool IsCheckedIfMoving(Color color, Move move)
+    {
+        CarryOutMove(move);
+        bool isChecked = IsChecked(color);
+        UndoMove(move);
+
+        return isChecked;
+    }
+
+    public Coordinates? FindKingPosition(Color color)
+    {
+        for (int x = 0; x < Ranks.Length; x++)
+        {
+            for (int y = 0; y < Files.Length; y++)
+            {
+                Square square = Squares[x,y];
+
+                if (square.Piece != null && square.Piece.GetName().Equals(PieceName.King) && square.Piece.Color == color)
+                {
+                    return new(x,y);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public bool IsChecked(Color color)
+    {
+        bool isChecked = false;
+
+        var kingPosition = FindKingPosition(color);
+
+        if (kingPosition.HasValue)
+        {
+            return IsCheckedByPawn(color, kingPosition.Value)
+                || IsCheckedByKnight(color, kingPosition.Value)
+                || IsCheckedByBishopOrRookOrQueenOrKing(color, kingPosition.Value);
+        }
+
+        return isChecked;
+    }
+
+    public bool IsCheckedByPawn(Color color, Coordinates kingPosition)
+    {
+        foreach (Coordinates direction in Bishop.BishopDirections)
+        {
+            if (direction.X == Pawn.DirectionByColor[color].X || direction.Y == Pawn.DirectionByColor[color].Y)
+            {
+                var square = GetSquareByDirection(kingPosition, direction);
+                if (square != null && square.IsOccupiedByPieceName(PieceName.Pawn) && !square.IsOccupiedByColor(color))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public bool IsCheckedByKnight(Color color, Coordinates kingPosition)
+    {
+        foreach (Coordinates direction in Knight.KnightDirections)
+        {
+            var square = GetSquareByDirection(kingPosition, direction);
+            if (square != null && square.IsOccupiedByPieceName(PieceName.Knight) && !square.IsOccupiedByColor(color))
+            {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    public bool IsCheckedByBishopOrRookOrQueenOrKing(Color color, Coordinates kingPosition)
+    {
+        foreach (Coordinates direction in Queen.QueenDirections)
+        {
+            Coordinates position = kingPosition;
+            position.Move(direction);
+            var square = GetSquare(position);
+            bool isKingCheckDoable = true;
+
+            while (square != null)
+            {
+                if (!square.IsEmpty())
+                {
+                    if (!square.IsOccupiedByColor(color))
+                    {
+                        if (Bishop.BishopDirections.Contains(direction))
+                        {
+                            if (square.IsOccupiedByPieceName(PieceName.Bishop) ||
+                                square.IsOccupiedByPieceName(PieceName.Queen) ||
+                                (square.IsOccupiedByPieceName(PieceName.King) && isKingCheckDoable))
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            if (square.IsOccupiedByPieceName(PieceName.Rook) ||
+                                square.IsOccupiedByPieceName(PieceName.Queen) ||
+                                (square.IsOccupiedByPieceName(PieceName.King) && isKingCheckDoable))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    break;
+                }
+
+                isKingCheckDoable = false;
+                position.Move(direction);
+                square = GetSquare(position);
+            }
+        }
+
+        return false;
+    }
+
     public override string ToString()
     {
         StringBuilder chessboard = new();
