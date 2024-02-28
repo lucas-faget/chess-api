@@ -2,7 +2,7 @@ using System.Text;
 
 namespace ChessApi.Chess;
 
-public class LegalMoves : Dictionary<string, Dictionary<string, Move>>
+public class LegalMoves : Dictionary<string, Moves>
 {
     public override string ToString()
     {
