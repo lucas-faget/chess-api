@@ -8,6 +8,12 @@ public class Pawn : Piece
         [Color.Black] = Direction.Down
     };
 
+    public static readonly Dictionary<Color, Coordinates[]> CaptureDirectionsByColor = new()
+    {
+        [Color.White] = [Direction.UpLeft, Direction.UpRight],
+        [Color.Black] = [Direction.DownLeft, Direction.DownRight]
+    };
+
     public Pawn() {}
     public Pawn(Color color) : base(color) {}
 
@@ -41,6 +47,19 @@ public class Pawn : Piece
                     if (!chessboard.IsCheckedIfMoving(Color, move))
                         moves.Add(square.Name, move2);
                 }
+            }
+        }
+
+        foreach (Coordinates captureDirection in CaptureDirectionsByColor[Color])
+        {
+            toPosition = fromPosition;
+            toPosition.Move(captureDirection);
+            square = chessboard.GetSquare(toPosition);
+            if (square != null && !square.IsEmpty() && !square.IsOccupiedByColor(Color) && !square.IsOccupiedByPieceName(PieceName.King))
+            {
+                Move move = new(fromPosition, toPosition, square.Piece);
+                if (!chessboard.IsCheckedIfMoving(Color, move))
+                    moves.Add(square.Name, move);
             }
         }
 
