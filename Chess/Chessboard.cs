@@ -8,45 +8,55 @@ public class Chessboard
     public static readonly char[] Files = ['a','b','c','d','e','f','g','h'];
     private readonly Square[,] Squares = new Square[Ranks.Length, Files.Length];
 
-    public Chessboard()
+    public Chessboard(string PiecePlacement)
     {
+        string[] rows = PiecePlacement.Split('/');
+
         for (int x = 0; x < Ranks.Length; x++)
         {
-            for (int y = 0; y < Files.Length; y++)
+            int y = 0;
+            foreach (char c in rows[Ranks.Length - 1 - x])
             {
-                Square square = new($"{Files[y]}{Ranks[x]}");
-
-                if (x == 1 || x == Ranks.Length - 2)
+                if (char.IsDigit(c))
                 {
-                    square.Piece = new Pawn(x == 1 ? Color.White : Color.Black);
-                }
-                else if (x == 0 || x == Ranks.Length - 1)
-                {
-                    Color color = x == 0 ? Color.White : Color.Black;
-                    switch (y)
+                    int spaces = (int)char.GetNumericValue(c);
+                    for (int i = 0; i < spaces; i++)
                     {
-                        case 0:
-                        case 7:
-                            square.Piece = new Rook(color);
+                        Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}");
+                        y++;
+                    }
+                }
+                else
+                {
+                    Color color = char.IsUpper(c) ? Color.White : Color.Black;
+                    switch (char.ToLower(c))
+                    {
+                        case 'p':
+                            Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new Pawn(color));
+                            y++;
                             break;
-                        case 1:
-                        case 6:
-                            square.Piece = new Knight(color);
+                        case 'n':
+                            Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new Knight(color));
+                            y++;
                             break;
-                        case 2:
-                        case 5:
-                            square.Piece = new Bishop(color);
+                        case 'b':
+                            Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new Bishop(color));
+                            y++;
                             break;
-                        case 3:
-                            square.Piece = new Queen(color);
+                        case 'r':
+                            Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new Rook(color));
+                            y++;
                             break;
-                        case 4:
-                            square.Piece = new King(color);
+                        case 'q':
+                            Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new Queen(color));
+                            y++;
+                            break;
+                        case 'k':
+                            Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new King(color));
+                            y++;
                             break;
                     }
                 }
-
-                Squares[x,y] = square;
             }
         }
     }
