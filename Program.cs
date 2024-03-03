@@ -12,6 +12,8 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 Chess chess = new();
+chess.Move("e2", "e4");
+chess.Move("d7", "d5");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
