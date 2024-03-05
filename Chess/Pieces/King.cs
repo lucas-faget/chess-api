@@ -12,7 +12,7 @@ public class King : Piece
         return PieceName.King;
     }
 
-    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard)
+    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string? enPassantTarget = null)
     {
         Moves moves = [];
 

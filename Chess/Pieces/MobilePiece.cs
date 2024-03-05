@@ -7,7 +7,7 @@ public abstract class MobilePiece : Piece
     public MobilePiece() {}
     public MobilePiece(Color color): base(color) {}
 
-    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard)
+    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string? enPassantTarget = null)
     {
         Moves moves = [];
 

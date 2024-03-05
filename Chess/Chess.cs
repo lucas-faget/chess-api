@@ -53,7 +53,7 @@ public class Chess
     public void SetLegalMoves()
     {
         LegalMoves = [];
-        LegalMoves = Chessboard.CalculateLegalMoves(ActiveColor);
+        LegalMoves = Chessboard.CalculateLegalMoves(ActiveColor, EnPassantTarget);
     }
 
     public bool IsLegalMove(string fromSquareName, string toSquareName)
@@ -72,6 +72,10 @@ public class Chess
     public void SaveMove(Move move)
     {
         Chessboard.CarryOutMove(move);
+        if (move.EnPassantTarget != null)
+        {
+            EnPassantTarget = move.EnPassantTarget;
+        }
         SavedMoves.Add(move);
         Console.WriteLine(Chessboard);
         ToggleColor();
@@ -85,6 +89,11 @@ public class Chess
             Move lastMove = SavedMoves[SavedMoves.Count - 1];
             Chessboard.UndoMove(lastMove);
             SavedMoves.RemoveAt(SavedMoves.Count - 1);
+            if (SavedMoves.Count > 0)
+            {
+                lastMove = SavedMoves[SavedMoves.Count - 1];
+                EnPassantTarget = lastMove.EnPassantTarget;
+            }
             Console.WriteLine(Chessboard);
             ToggleColor();
             SetLegalMoves();

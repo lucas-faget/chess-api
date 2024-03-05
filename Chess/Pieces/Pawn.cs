@@ -7,12 +7,12 @@ public class Pawn : Piece
         [Color.White] = Direction.Up,
         [Color.Black] = Direction.Down
     };
-
     public static readonly Dictionary<Color, Coordinates[]> CaptureDirectionsByColor = new()
     {
         [Color.White] = [Direction.UpLeft, Direction.UpRight],
         [Color.Black] = [Direction.DownLeft, Direction.DownRight]
     };
+    public static readonly Coordinates[] EnPassantDirections = [Direction.Left, Direction.Right];
 
     public Pawn() {}
     public Pawn(Color color) : base(color) {}
@@ -22,7 +22,7 @@ public class Pawn : Piece
         return PieceName.Pawn;
     }
 
-    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard)
+    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string? enPassantTarget = null)
     {
         Moves moves = [];
         Coordinates toPosition = fromPosition;
@@ -43,9 +43,34 @@ public class Pawn : Piece
 
                 if (square?.IsEmpty() ?? false)
                 {
-                    Move move2 = new(fromPosition, toPosition);
+                    Move move2 = new(fromPosition, toPosition)
+                    {
+                        EnPassantTarget = square.Name
+                    };
                     if (!chessboard.IsCheckedIfMoving(Color, move))
                         moves.Add(square.Name, move2);
+                }
+            }
+        }
+
+        if (enPassantTarget != null)
+        {
+            foreach (Coordinates enPassantDirection in EnPassantDirections)
+            {
+                Coordinates capturePosition = fromPosition;
+                capturePosition.Move(enPassantDirection);
+                Square? captureSquare = chessboard.GetSquare(capturePosition);
+                if (captureSquare?.Name == enPassantTarget)
+                {
+                    toPosition = capturePosition;
+                    toPosition.Move(DirectionByColor[Color]);
+                    square = chessboard.GetSquare(toPosition);
+                    if (square?.IsEmpty() ?? false)
+                    {
+                        Move move = new(fromPosition, toPosition, captureSquare.Piece, capturePosition);
+                        if (!chessboard.IsCheckedIfMoving(Color, move))
+                            moves.Add(square.Name, move);
+                    }
                 }
             }
         }

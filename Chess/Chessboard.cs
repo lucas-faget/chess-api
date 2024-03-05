@@ -91,7 +91,7 @@ public class Chessboard
         }
     }
 
-    public LegalMoves CalculateLegalMoves(Color color)
+    public LegalMoves CalculateLegalMoves(Color color, string? enPassantTarget = null)
     {
         LegalMoves legalMoves = [];
 
@@ -103,7 +103,7 @@ public class Chessboard
 
                 if (square.Piece != null && square.Piece.Color == color)
                 {
-                    Moves moves = square.Piece.GetMoves(new(x,y), this);
+                    Moves moves = square.Piece.GetMoves(new(x,y), this, enPassantTarget);
 
                     if (moves.Count > 0)
                     {
