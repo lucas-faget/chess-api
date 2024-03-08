@@ -22,7 +22,7 @@ public class Pawn : Piece
         return PieceName.Pawn;
     }
 
-    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string? enPassantTarget = null)
+    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string castlingAvailability, string? enPassantTarget = null)
     {
         Moves moves = [];
         Coordinates toPosition = fromPosition;
@@ -60,11 +60,13 @@ public class Pawn : Piece
                 Coordinates capturePosition = fromPosition;
                 capturePosition.Move(enPassantDirection);
                 Square? captureSquare = chessboard.GetSquare(capturePosition);
+
                 if (captureSquare?.Name == enPassantTarget)
                 {
                     toPosition = capturePosition;
                     toPosition.Move(DirectionByColor[Color]);
                     square = chessboard.GetSquare(toPosition);
+
                     if (square?.IsEmpty() ?? false)
                     {
                         Move move = new(fromPosition, toPosition, captureSquare.Piece, capturePosition);
@@ -80,6 +82,7 @@ public class Pawn : Piece
             toPosition = fromPosition;
             toPosition.Move(captureDirection);
             square = chessboard.GetSquare(toPosition);
+            
             if (square != null && !square.IsEmpty() && !square.IsOccupiedByColor(Color) && !square.IsOccupiedByPieceName(PieceName.King))
             {
                 Move move = new(fromPosition, toPosition, square.Piece);

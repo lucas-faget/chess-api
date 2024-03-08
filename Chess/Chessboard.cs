@@ -31,27 +31,27 @@ public class Chessboard
                     Color color = char.IsUpper(c) ? Color.White : Color.Black;
                     switch (char.ToLower(c))
                     {
-                        case 'p':
+                        case PieceName.Pawn:
                             Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new Pawn(color));
                             y++;
                             break;
-                        case 'n':
+                        case PieceName.Knight:
                             Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new Knight(color));
                             y++;
                             break;
-                        case 'b':
+                        case PieceName.Bishop:
                             Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new Bishop(color));
                             y++;
                             break;
-                        case 'r':
+                        case PieceName.Rook:
                             Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new Rook(color));
                             y++;
                             break;
-                        case 'q':
+                        case PieceName.Queen:
                             Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new Queen(color));
                             y++;
                             break;
-                        case 'k':
+                        case PieceName.King:
                             Squares[x, y] = new Square($"{Files[y]}{Ranks[x]}", new King(color));
                             y++;
                             break;
@@ -91,7 +91,7 @@ public class Chessboard
         }
     }
 
-    public LegalMoves CalculateLegalMoves(Color color, string? enPassantTarget = null)
+    public LegalMoves CalculateLegalMoves(Color color, string castlingAvailability, string? enPassantTarget = null)
     {
         LegalMoves legalMoves = [];
 
@@ -103,7 +103,7 @@ public class Chessboard
 
                 if (square.Piece != null && square.Piece.Color == color)
                 {
-                    Moves moves = square.Piece.GetMoves(new(x,y), this, enPassantTarget);
+                    Moves moves = square.Piece.GetMoves(new(x,y), this, castlingAvailability, enPassantTarget);
 
                     if (moves.Count > 0)
                     {

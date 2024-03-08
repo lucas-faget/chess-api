@@ -21,7 +21,7 @@ public class Knight : Piece
         return PieceName.Knight;
     }
 
-    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string? enPassantTarget = null)
+    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string castlingAvailability, string? enPassantTarget = null)
     {
         Moves moves = [];
 

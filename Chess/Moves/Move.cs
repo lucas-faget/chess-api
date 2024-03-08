@@ -7,6 +7,7 @@ public class Move
     public Coordinates CapturePosition { get; set; }
     public Piece? CapturedPiece { get; set; }
     public Move? RookMove { get; set; } = null;
+    public string? CastlingAvailability { get; set; } = null;
     public string? EnPassantTarget = null;
 
     public Move() {}

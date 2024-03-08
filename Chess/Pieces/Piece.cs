@@ -9,7 +9,7 @@ public abstract class Piece
 
     public abstract char GetName();
 
-    public abstract Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string? enPassantTarget = null);
+    public abstract Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string castlingAvailability, string? enPassantTarget = null);
 
     public override string ToString()
     {
