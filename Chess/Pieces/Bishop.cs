@@ -17,7 +17,7 @@ public class Bishop : Piece
         return PieceName.Bishop;
     }
 
-    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string castlingAvailability, string? enPassantTarget = null)
+    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, CastlingAvailability castlingAvailability, string? enPassantTarget = null)
     {
         Moves moves = [];
 

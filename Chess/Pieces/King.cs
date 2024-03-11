@@ -4,15 +4,20 @@ public class King : Piece
 {
     public static readonly Coordinates[] KingDirections = [.. Bishop.BishopDirections, .. Rook.RookDirections];
 
-    public King() {}
-    public King(Color color) : base(color) {}
+    public King() : base(Color.White)
+    {
+    }
+
+    public King(Color color) : base(color)
+    {
+    }
 
     public override char GetName()
     {
         return PieceName.King;
     }
 
-    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string castlingAvailability, string? enPassantTarget = null)
+    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, CastlingAvailability castlingAvailability, string? enPassantTarget = null)
     {
         Moves moves = [];
 
@@ -48,11 +53,12 @@ public class King : Piece
         return moves;
     }
 
-    public Move? GetCastlingMove(Coordinates fromPosition, Chessboard chessboard, string castlingAvailability, Side side)
+    public Move? GetCastlingMove(Coordinates fromPosition, Chessboard chessboard, CastlingAvailability castlingAvailability, Side side)
     {
-        if (Castling.IsCastlingAvailable(castlingAvailability, Color, side))
+        if (side == Side.Kingside && castlingAvailability.Kingside ||
+            side == Side.Queenside && castlingAvailability.Queenside)
         {
-            int spaces = side == Side.Kingside ? 2 : 3;
+            int spaces = side == Side.Kingside ? Castling.KingsideCastlingSpaces : Castling.QueensideCastlingSpaces;
             Coordinates rookPosition = fromPosition;
             Coordinates direction = side == Side.Kingside ? Direction.Right : Direction.Left;
             Square? square;

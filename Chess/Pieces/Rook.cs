@@ -9,15 +9,20 @@ public class Rook : Piece
         Direction.Left
     ];
 
-    public Rook() {}
-    public Rook(Color color) : base(color) {}
+    public Rook() : base(Color.White)
+    {
+    }
+
+    public Rook(Color color) : base(color)
+    {
+    }
 
     public override char GetName()
     {
         return PieceName.Rook;
     }
 
-    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string castlingAvailability, string? enPassantTarget = null)
+    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, CastlingAvailability castlingAvailability, string? enPassantTarget = null)
     {
         Moves moves = [];
 

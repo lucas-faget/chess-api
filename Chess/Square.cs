@@ -5,7 +5,10 @@ public class Square
     public string Name { get; set; } = null!;
     public Piece? Piece { get; set; }
 
-    public Square() {}
+    public Square()
+    {
+    }
+
     public Square(string name, Piece? piece = null)
     {
         Name = name;

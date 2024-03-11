@@ -13,15 +13,20 @@ public class Knight : Piece
         Direction.UpUpLeft
     ];
 
-    public Knight() {}
-    public Knight(Color color) : base(color) {}
+    public Knight() : base(Color.White)
+    {
+    }
+
+    public Knight(Color color) : base(color)
+    {
+    }
 
     public override char GetName()
     {
         return PieceName.Knight;
     }
 
-    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string castlingAvailability, string? enPassantTarget = null)
+    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, CastlingAvailability castlingAvailability, string? enPassantTarget = null)
     {
         Moves moves = [];
 

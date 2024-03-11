@@ -14,15 +14,20 @@ public class Pawn : Piece
     };
     public static readonly Coordinates[] EnPassantDirections = [Direction.Left, Direction.Right];
 
-    public Pawn() {}
-    public Pawn(Color color) : base(color) {}
+    public Pawn() : base(Color.White)
+    {
+    }
+
+    public Pawn(Color color) : base(color)
+    {
+    }
 
     public override char GetName()
     {
         return PieceName.Pawn;
     }
 
-    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string castlingAvailability, string? enPassantTarget = null)
+    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, CastlingAvailability castlingAvailability, string? enPassantTarget = null)
     {
         Moves moves = [];
         Coordinates toPosition = fromPosition;

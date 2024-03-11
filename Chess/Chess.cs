@@ -3,19 +3,16 @@ namespace ChessApi.Chess;
 public class Chess
 {
     public static readonly string StandardFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    public static readonly string WhiteKingsideRookSquare = "h1";
-    public static readonly string WhiteQueensideRookSquare = "a1";
-    public static readonly string BlackKingsideRookSquare = "h8";
-    public static readonly string BlackQueensideRookSquare = "a8";
     
     public Chessboard Chessboard { get; set; }
-    public Color ActiveColor;
-    public string CastlingAvailability;
-    public string? EnPassantTarget = null;
-    public int HalfmoveClock;
-    public int FullmoveNumber;
+
+    public Player[] Players { get; set; } = [new(Color.White), new(Color.Black)];
+    public int ActivePlayerIndex { get; set; }
+    public string? EnPassantTarget { get; set; } = null;
+    public int HalfmoveClock { get; set; }
+    public int FullmoveNumber { get; set; }
     public LegalMoves LegalMoves { get; set; } = [];
-    public List<Move> SavedMoves { get; set; } = [];
+    public List<Move> MoveHistory { get; set; } = [];
 
     public Chess(): this(StandardFenString)
     {
@@ -25,8 +22,7 @@ public class Chess
     {
         FenRecord fenRecord = FenRecord.FromFenString(fenString);
         Chessboard = new Chessboard(fenRecord.PiecePlacement);
-        ActiveColor = fenRecord.ActiveColor.Equals("w") ? Color.White : Color.Black;
-        CastlingAvailability = fenRecord.CastlingAvailability;
+        ActivePlayerIndex = fenRecord.ActiveColor.Equals("w") ? 0 : 1;
         EnPassantTarget = fenRecord.EnPassantTarget.Equals("-") ? null : fenRecord.EnPassantTarget;
         HalfmoveClock = int.Parse(fenRecord.HalfmoveClock);
         FullmoveNumber = int.Parse(fenRecord.FullmoveNumber);
@@ -47,15 +43,20 @@ public class Chess
         }
     }
 
-    public void ToggleColor()
+    public void SwitchToNextPlayer()
     {
-        ActiveColor = ActiveColor == Color.White ? Color.Black : Color.White;
+        ActivePlayerIndex = (ActivePlayerIndex + 1) % Players.Length;
+    }
+
+    public void SwitchToPreviousPlayer()
+    {
+        ActivePlayerIndex = (ActivePlayerIndex - 1) % Players.Length;
     }
 
     public void SetLegalMoves()
     {
         LegalMoves = [];
-        LegalMoves = Chessboard.CalculateLegalMoves(ActiveColor, CastlingAvailability, EnPassantTarget);
+        LegalMoves = Chessboard.CalculateLegalMoves(Players[ActivePlayerIndex], EnPassantTarget);
     }
 
     public bool IsLegalMove(string fromSquareName, string toSquareName)
@@ -74,39 +75,30 @@ public class Chess
     public void SaveMove(Move move)
     {
         Chessboard.CarryOutMove(move);
-        if (move.CastlingAvailability != null)
-        {
-            CastlingAvailability = move.CastlingAvailability;
-        }
         if (move.EnPassantTarget != null)
         {
             EnPassantTarget = move.EnPassantTarget;
         }
-        SavedMoves.Add(move);
+        MoveHistory.Add(move);
         Console.WriteLine(Chessboard);
-        ToggleColor();
+        SwitchToNextPlayer();
         SetLegalMoves();
     }
 
     public void DeleteLastMove()
     {
-        if (SavedMoves.Count > 0)
+        if (MoveHistory.Count > 0)
         {
-            Move lastMove = SavedMoves[SavedMoves.Count - 1];
+            Move lastMove = MoveHistory[MoveHistory.Count - 1];
             Chessboard.UndoMove(lastMove);
-            SavedMoves.RemoveAt(SavedMoves.Count - 1);
-            if (SavedMoves.Count > 0)
+            MoveHistory.RemoveAt(MoveHistory.Count - 1);
+            if (MoveHistory.Count > 0)
             {
-                lastMove = SavedMoves[SavedMoves.Count - 1];
-                CastlingAvailability = lastMove.CastlingAvailability ?? CastlingAvailability;
+                lastMove = MoveHistory[MoveHistory.Count - 1];
                 EnPassantTarget = lastMove.EnPassantTarget;
             }
-            else
-            {
-                CastlingAvailability = "KQkq";
-            }
             Console.WriteLine(Chessboard);
-            ToggleColor();
+            SwitchToPreviousPlayer();
             SetLegalMoves();
         }
     }

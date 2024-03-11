@@ -6,7 +6,12 @@ public class Chessboard
 {
     public static readonly char[] Ranks = ['1','2','3','4','5','6','7','8'];
     public static readonly char[] Files = ['a','b','c','d','e','f','g','h'];
-    private readonly Square[,] Squares = new Square[Ranks.Length, Files.Length];
+    public static readonly char WhiteRookRank = '1';
+    public static readonly char BlackRookRank = '8';
+    public static readonly char KingsideRookFile = 'h';
+    public static readonly char QueensideRookFile = 'a';
+    
+    private Square[,] Squares { get; set; } = new Square[Ranks.Length, Files.Length];
 
     public Chessboard(string PiecePlacement)
     {
@@ -91,7 +96,7 @@ public class Chessboard
         }
     }
 
-    public LegalMoves CalculateLegalMoves(Color color, string castlingAvailability, string? enPassantTarget = null)
+    public LegalMoves CalculateLegalMoves(Player player, string? enPassantTarget = null)
     {
         LegalMoves legalMoves = [];
 
@@ -101,9 +106,9 @@ public class Chessboard
             {
                 Square square = Squares[x,y];
 
-                if (square.Piece != null && square.Piece.Color == color)
+                if (square.Piece != null && square.Piece.Color == player.Color)
                 {
-                    Moves moves = square.Piece.GetMoves(new(x,y), this, castlingAvailability, enPassantTarget);
+                    Moves moves = square.Piece.GetMoves(new(x,y), this, player.CastlingAvailability, enPassantTarget);
 
                     if (moves.Count > 0)
                     {

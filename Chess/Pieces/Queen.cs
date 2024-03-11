@@ -4,15 +4,20 @@ public class Queen : Piece
 {
     public static readonly Coordinates[] QueenDirections = King.KingDirections;
 
-    public Queen() {}
-    public Queen(Color color) : base(color) {}
+    public Queen() : base(Color.White)
+    {
+    }
+
+    public Queen(Color color) : base(color)
+    {
+    }
 
     public override char GetName()
     {
         return PieceName.Queen;
     }
 
-    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, string castlingAvailability, string? enPassantTarget = null)
+    public override Moves GetMoves(Coordinates fromPosition, Chessboard chessboard, CastlingAvailability castlingAvailability, string? enPassantTarget = null)
     {
         Moves moves = [];
 
